@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.afollestad.materialcamera.MaterialCamera;
 import com.hrong.simplelifetools.camera.OpenCamera;
 import com.hrong.simplelifetools.movie.MovieListActivity;
+import com.hrong.simplelifetools.scan.ScanActivity;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -110,8 +111,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_Movies) {
             Intent movieIntent = new Intent(this, MovieListActivity.class);
             startActivity(movieIntent);
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_Scan) {
+            Intent sacnIntent = new Intent(this, ScanActivity.class);
+            startActivity(sacnIntent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

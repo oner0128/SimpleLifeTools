@@ -11,9 +11,9 @@
             android:icon="@drawable/ic_add_to_queue_black_24dp"
             android:title="Movies" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_Scan"
+            android:icon="@drawable/ic_select_all_black_24dp"
+            android:title="Scan" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

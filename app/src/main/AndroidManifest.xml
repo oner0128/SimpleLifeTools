@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <!-- camera-->
+        <!-- camera -->
         <activity
             android:name="com.afollestad.materialcamera.CaptureActivity"
             android:theme="@style/MaterialCamera.CaptureActivity" />
@@ -33,10 +33,11 @@
             android:name="com.afollestad.materialcamera.CaptureActivity2"
             android:theme="@style/MaterialCamera.CaptureActivity" />
 
-        <!-- movies-->
-        <activity android:name=".movie.MovieListActivity"
+        <!-- movies -->
+        <activity
+            android:name=".movie.MovieListActivity"
             android:label="Movies"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".movie.MovieDetailActivity"
             android:label="@string/title_movie_detail"
@@ -46,10 +47,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hrong.simplelifetools.movie.MovieListActivity" />
         </activity>
+
         <provider
-            android:name="com.hrong.simplelifetools.movie.data.MoviesProvider"
-            android:authorities="@string/authorities"></provider>
-        <service android:name=".movie.service.MovieService"></service>
+            android:name=".movie.data.MoviesProvider"
+            android:authorities="@string/authorities" />
+
+        <service android:name=".movie.service.MovieService" />
+
+        <!-- scan -->
+        <activity android:name=".scan.ScanActivity"></activity>
     </application>
 
 </manifest>
