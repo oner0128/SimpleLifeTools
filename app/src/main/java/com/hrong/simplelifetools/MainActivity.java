@@ -1,6 +1,8 @@
 package com.hrong.simplelifetools;
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -14,21 +16,26 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.MaterialCamera;
-import com.hrong.simplelifetools.Camera.OpenCamera;
+import com.hrong.simplelifetools.camera.OpenCamera;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    File saveFolder;
+    MaterialCamera materialCamera;
+    private final static int CAMERA_RQ = 6969;
+    private final static int REQUEST_PERMISION_CODE = 84;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_PERMISION_CODE);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,8 +56,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        saveFolder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MaterialCameraSample");
-        saveFolder.mkdirs();
+
     }
 
     @Override
@@ -90,21 +96,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
+        //createCamera
+        materialCamera = OpenCamera.createCamera(this);
+        if (id == R.id.nav_cameraVideo) {
             // Handle the camera action
-
-            new MaterialCamera(this).saveDir(saveFolder).stillShot()
-                    .start(8989);
-        } else if (id == R.id.nav_gallery) {
-new OpenCamera(this);
+            materialCamera.start(CAMERA_RQ);
+        } else if (id == R.id.nav_cameraStillShot) {
+            materialCamera
+                    .stillShot() // launches the Camera in stillshot mode
+                    .labelConfirm(R.string.mcam_use_stillshot).start(CAMERA_RQ);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
@@ -112,20 +115,36 @@ new OpenCamera(this);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Received recording or error from MaterialCamera
-        if (requestCode == 8989) {
+        if (requestCode == CAMERA_RQ) {
 
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
-            } else if(data != null) {
+                final File file = new File(data.getData().getPath());
+                Toast.makeText(this, String.format("Saved to: %s, size: %s",
+                        file.getAbsolutePath(), fileSize(file)), Toast.LENGTH_LONG).show();
+            } else if (data != null) {
                 Exception e = (Exception) data.getSerializableExtra(MaterialCamera.ERROR_EXTRA);
-                e.printStackTrace();
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                if (e != null) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
+    private String readableFileSize(long size) {
+        if (size <= 0) return size + " B";
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    private String fileSize(File file) {
+        return readableFileSize(file.length());
+    }
+
 }
