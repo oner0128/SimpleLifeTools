@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.hrong.simplelifetools"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -30,4 +30,7 @@ dependencies {
     compile 'com.android.support:design:25.+'
     testCompile 'junit:junit:4.12'
     compile 'com.afollestad:material-camera:0.4.4'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.erd:android-volley:1.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
 }

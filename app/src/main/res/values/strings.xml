@@ -8,4 +8,10 @@
     <string name="Camera">Camera</string>
     <string name="Camera_Video">CameraVideo</string>
     <string name="Camera_StillShot">CameraStillShot</string>
+
+    <!-- movies-->
+    <string name="title_movie_detail">Movie Detail</string>
+    <string name="Sorted_by_Top_Rated">Sorted by Top Rated</string>
+    <string name="Sorted_by_Popular">Sorted by  Popular</string>
+    <string name="authorities">com.hrong.simplelifetools</string>
 </resources>

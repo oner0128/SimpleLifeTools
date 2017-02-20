@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialcamera.MaterialCamera;
 import com.hrong.simplelifetools.camera.OpenCamera;
+import com.hrong.simplelifetools.movie.MovieListActivity;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -29,12 +30,13 @@ public class MainActivity extends AppCompatActivity
     MaterialCamera materialCamera;
     private final static int CAMERA_RQ = 6969;
     private final static int REQUEST_PERMISION_CODE = 84;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_PERMISION_CODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISION_CODE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,8 +107,9 @@ public class MainActivity extends AppCompatActivity
             materialCamera
                     .stillShot() // launches the Camera in stillshot mode
                     .labelConfirm(R.string.mcam_use_stillshot).start(CAMERA_RQ);
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_Movies) {
+            Intent movieIntent = new Intent(this, MovieListActivity.class);
+            startActivity(movieIntent);
         } else if (id == R.id.nav_manage) {
 
         }
@@ -136,6 +139,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
     private String readableFileSize(long size) {
         if (size <= 0) return size + " B";
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
