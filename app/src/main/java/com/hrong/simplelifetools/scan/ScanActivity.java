@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -65,9 +66,11 @@ public class ScanActivity extends AppCompatActivity implements QRCodeView.Delega
     @Override
     public void onScanQRCodeSuccess(String result) {
         Log.i(TAG, "result:" + result);
-        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
-        vibrate();
-        mQRCodeView.startSpot();
+//        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+        Intent openBrowser=new Intent(Intent.ACTION_VIEW, Uri.parse(result));
+        startActivity(Intent.createChooser(openBrowser,"choose a browser"));
+//        vibrate();
+//        mQRCodeView.startSpot();
     }
 
     @Override
