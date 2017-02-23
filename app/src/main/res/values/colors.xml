@@ -5,4 +5,11 @@
     <color name="colorAccent">#FF4081</color>
     <color name="navigationBarColor">#3F51B5</color>
     <color name="colorPrimaryDarkTrans">#303F9F</color>
+
+    <color name="grey">#cccccc</color>
+    <color name="sunShine_light_blue">#ff64c2f4</color>
+    <color name="sunShine_blue">#ff1ca8f4</color>
+    <color name="sunShine_dark_blue">#0288D1</color>
+    <color name="item_today">#FFFFFF</color>
+    <color name="grey_700">#646464</color>
 </resources>

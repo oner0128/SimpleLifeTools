@@ -88,7 +88,7 @@ public class MovieListActivity extends AppCompatActivity implements LoaderManage
         getSupportLoaderManager().initLoader(MOVIES_LIST_LOADER_ID, null, this);
         movieListCursorAdapter = new MovieListCursorAdapter(this, null, mTwoPane);
         setupRecyclerView((RecyclerView) recyclerView, movieListCursorAdapter);
-        updatePopularMovies();
+        updateTopRateMoviesList();
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView, MovieListCursorAdapter movieListCursorAdapter) {

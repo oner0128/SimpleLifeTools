@@ -2,9 +2,9 @@ package com.hrong.simplelifetools;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -22,16 +22,26 @@ import com.afollestad.materialcamera.MaterialCamera;
 import com.hrong.simplelifetools.camera.OpenCamera;
 import com.hrong.simplelifetools.movie.MovieListActivity;
 import com.hrong.simplelifetools.scan.ScanActivity;
+import com.hrong.simplelifetools.weather.DetailActivity;
+import com.hrong.simplelifetools.weather.DetailFragment;
+import com.hrong.simplelifetools.weather.ForecastFragment;
+import com.hrong.simplelifetools.weather.SettingsActivity;
+import com.hrong.simplelifetools.weather.Utility;
+import com.hrong.simplelifetools.weather.WeatherMainActivity;
+import com.hrong.simplelifetools.weather.sync.SunshineSyncAdapter;
 
 import java.io.File;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,ForecastFragment.Callback {
     MaterialCamera materialCamera;
     private final static int CAMERA_RQ = 6969;
     private final static int REQUEST_PERMISION_CODE = 84;
-
+    private String mLocation;
+    private final String LOG_TAG = com.hrong.simplelifetools.weather.WeatherMainActivity.class.getSimpleName();
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    private static boolean mTwoPane;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +70,41 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mLocation = Utility.getPreferredLocation(this);
+        if (findViewById(R.id.weather_detail_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction().
+                        replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG);
+            }
+
+        } else {
+            mTwoPane = false;
+            //去除操作栏和Today选项的阴影
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//                toolbar.setElevation(0);
+//            } else getSupportActionBar().setElevation(0f);
+        }
+        ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+        forecastFragment.setUseTodayLayout(mTwoPane);
+        SunshineSyncAdapter.initializeAdapter(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String location = Utility.getPreferredLocation(this);
+        if (!mLocation.equals(location) && location != null) {
+            ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+            if (forecastFragment != null)
+                forecastFragment.onLocationChanged();
+
+            DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if (detailFragment != null)
+                detailFragment.onLocationChanged(location);
+        }
+        mLocation = location;
     }
 
     @Override
@@ -88,6 +133,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -100,9 +146,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         //createCamera
-        materialCamera = OpenCamera.createCamera(this);
+
         if (id == R.id.nav_cameraVideo) {
             // Handle the camera action
+            materialCamera = OpenCamera.createCamera(this);
             materialCamera.start(CAMERA_RQ);
         } else if (id == R.id.nav_cameraStillShot) {
             materialCamera
@@ -114,6 +161,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_Scan) {
             Intent sacnIntent = new Intent(this, ScanActivity.class);
             startActivity(sacnIntent);
+        }
+        else if (id == R.id.nav_weather) {
+            Intent weatherIntent = new Intent(this, WeatherMainActivity.class);
+            startActivity(weatherIntent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -153,4 +204,20 @@ public class MainActivity extends AppCompatActivity
         return readableFileSize(file.length());
     }
 
+    @Override
+    public void onItemSelected(Uri dateUri) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, dateUri);
+            DetailFragment detailFragment = new DetailFragment();
+            detailFragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.weather_detail_container, detailFragment, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, DetailActivity.class)
+                    .setData(dateUri);
+            startActivity(intent);
+        }
+    }
 }

@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -56,6 +59,50 @@
 
         <!-- scan -->
         <activity android:name=".scan.ScanActivity"></activity>
+        <!-- weather -->
+        <activity
+            android:name=".weather.WeatherMainActivity"
+            android:theme="@style/ForecastTheme">
+        </activity>
+        <activity
+            android:name=".weather.DetailActivity"
+            android:label="@string/title_activity_detail"
+            android:parentActivityName=".weather.WeatherMainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hrong.simplelifetools.weather.WeatherMainActivity" />
+        </activity>
+        <activity
+            android:name=".weather.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".weather.WeatherMainActivity"
+            android:theme="@style/SettingTheme" />
+
+        <provider
+            android:name=".weather.data.WeatherProvider"
+            android:authorities="@string/weather_content_authority"
+            android:exported="false"
+            android:syncable="true" />
+
+        <service android:name=".weather.sync.SunshineAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <service
+            android:name=".weather.sync.SunshineSyncService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
     </application>
 
 </manifest>
