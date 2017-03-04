@@ -81,7 +81,25 @@
         <item>metric</item>
         <item>imperial</item>
     </string-array>
-
+    <string name="pref_LocationList_title">Location List</string>
+    <string name="pref_LocationList_key">Location List</string>
+    <string name="pref_LocationList_defaul" translatable="false">西安</string>
+    <string-array name="pref_Location_list">
+        <item>西安</item>
+        <item>上海</item>
+        <item>北京</item>
+        <item>广州</item>
+        <item>深圳</item>
+        <item>成都</item>
+    </string-array>
+    <string-array name="pref_Location_list_values">
+        <item>CN101110101</item>
+        <item>CN101020100</item>
+        <item>CN101010100</item>
+        <item>CN101280101</item>
+        <item>CN101280601</item>
+        <item>CN101270101</item>
+    </string-array>
     <!-- Example settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 

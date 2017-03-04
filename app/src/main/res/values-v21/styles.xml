@@ -75,4 +75,8 @@
         <item name="android:textSize">22sp</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
+    <declare-styleable name="NumberPickerPreference">
+        <attr name="max" format="integer"/>
+        <attr name="min" format="integer"/>
+    </declare-styleable>
 </resources>
