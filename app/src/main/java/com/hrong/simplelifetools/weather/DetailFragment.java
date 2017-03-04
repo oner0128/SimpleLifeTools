@@ -28,7 +28,7 @@ import com.hrong.simplelifetools.weather.data.WeatherContract;
 
 public  class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     final static String LOG_TAG = DetailFragment.class.getSimpleName();
-    final static String FORECAST_SHARE_HASHTAG = "#SunShineApp";
+    final static String FORECAST_SHARE_HASHTAG = "#SimpleLifeToolsApp";
     public final static String DETAIL_URI="URI";
     private Uri mUri;
     String mForecast;

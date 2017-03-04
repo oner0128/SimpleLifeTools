@@ -19,11 +19,18 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.hrong.simplelifetools.R;
+import com.hrong.simplelifetools.movie.MovieUtility;
 import com.hrong.simplelifetools.weather.Utility;
 import com.hrong.simplelifetools.weather.data.WeatherContract;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,68 +63,40 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Sarting Snyc");
-        HttpURLConnection httpURLConnection = null;
-        BufferedReader reader = null;
-        String forecastJsonStr = null;
-
 //      传入LOCATION和UNIT_TYPE
-        String locationSetting = Utility.getPreferredLocation(getContext());
+        final String locationSetting = Utility.getPreferredLocation(getContext());
 //        String appid = "b21e787cebb54337b23e4816da79da62";//OpenWeather KEY
         String appid = "af071ae33e6643368b43a115e597ace4";
+        final String FORECAST_BASE_URL = "https://free-api.heweather.com/v5/forecast?";
+        final String POSTCODE_PARAM = "city";
+        final String APPID_PARAM = "key";
 
-        try {
-            final String FORECAST_BASE_URL = "https://free-api.heweather.com/v5/forecast?";
-            final String POSTCODE_PARAM = "city";
-            final String APPID_PARAM = "key";
-
-            //构建请求天气的API
-            Uri.Builder buildUri = Uri.parse(FORECAST_BASE_URL).buildUpon().
-                    appendQueryParameter(POSTCODE_PARAM, locationSetting).
-                    appendQueryParameter(APPID_PARAM, appid);
-            Log.v(LOG_TAG, "Built Uri :" + buildUri);
-
-            URL url = new URL(buildUri.toString());
-
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.connect();
-
-            InputStream inputStream = httpURLConnection.getInputStream();
-            StringBuffer stringBuffer = new StringBuffer();
-            if (inputStream == null) {
-                return;
-            }
-            reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuffer.append(line + "\n");
-            }
-            if (stringBuffer.length() == 0) {
-                return;
-            }
-            forecastJsonStr = stringBuffer.toString();
-//            Log.v(LOG_TAG, "forecast JSON string :" + forecastJsonStr);//在控制台输出返回的天气数据
-            Utility.getHeFengWeatherDataFromJson(getContext(), forecastJsonStr, locationSetting);
-            notifyWeather();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "ERROR", e);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } finally {
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-            if (reader != null) {
+        //构建请求天气的API
+        Uri.Builder buildUri = Uri.parse(FORECAST_BASE_URL).buildUpon().
+                appendQueryParameter(POSTCODE_PARAM, locationSetting).
+                appendQueryParameter(APPID_PARAM, appid);
+        Log.v(LOG_TAG, "Built Uri :" + buildUri);
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getContext());
+        String url = buildUri.toString();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+//                Log.d(LOG_TAG, response.toString());
                 try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "ERROR Closing reader", e);
+                    Utility.getHeFengWeatherDataFromJson(getContext(), response.toString(), locationSetting);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-        }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(LOG_TAG, error.toString());
+            }
+        });
+        mRequestQueue.add(jsonObjectRequest);
+
+
     }
 
     /**
@@ -233,12 +212,12 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 builder.setSmallIcon(iconId).
                         setContentTitle(title).
                         setContentText(forecastText);
-                Intent intent = new Intent(context, com.hrong.simplelifetools.weather.WeatherMainActivity.class);
+                Intent intent = new Intent(context, com.hrong.simplelifetools.MainActivity.class);
                 // This ensures that navigating backward from the Activity leads out of
                 // your application to the Home screen.
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 // Adds the back stack for the Intent (but not the Intent itself)
-                stackBuilder.addParentStack(com.hrong.simplelifetools.weather.WeatherMainActivity.class);
+                stackBuilder.addParentStack(com.hrong.simplelifetools.MainActivity.class);
                 // Adds the Intent that starts the Activity to the top of the stack
                 stackBuilder.addNextIntent(intent);
                 PendingIntent resultPendingIntent =

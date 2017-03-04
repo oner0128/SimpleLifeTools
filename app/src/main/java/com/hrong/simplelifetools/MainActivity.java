@@ -27,39 +27,30 @@ import com.hrong.simplelifetools.weather.DetailFragment;
 import com.hrong.simplelifetools.weather.ForecastFragment;
 import com.hrong.simplelifetools.weather.SettingsActivity;
 import com.hrong.simplelifetools.weather.Utility;
-import com.hrong.simplelifetools.weather.WeatherMainActivity;
 import com.hrong.simplelifetools.weather.sync.SunshineSyncAdapter;
 
 import java.io.File;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,ForecastFragment.Callback {
+        implements NavigationView.OnNavigationItemSelectedListener, ForecastFragment.Callback {
     MaterialCamera materialCamera;
     private final static int CAMERA_RQ = 6969;
     private final static int REQUEST_PERMISION_CODE = 84;
     private String mLocation;
-    private final String LOG_TAG = com.hrong.simplelifetools.weather.WeatherMainActivity.class.getSimpleName();
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private static boolean mTwoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISION_CODE);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, REQUEST_PERMISION_CODE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -145,8 +136,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        //createCamera
-
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (id == R.id.nav_cameraVideo) {
             // Handle the camera action
             materialCamera = OpenCamera.createCamera(this);
@@ -161,13 +151,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_Scan) {
             Intent sacnIntent = new Intent(this, ScanActivity.class);
             startActivity(sacnIntent);
+        } else if (id == R.id.nav_weather) {
+            drawer.closeDrawer(GravityCompat.START);
         }
-        else if (id == R.id.nav_weather) {
-            Intent weatherIntent = new Intent(this, WeatherMainActivity.class);
-            startActivity(weatherIntent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

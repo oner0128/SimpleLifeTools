@@ -55,27 +55,21 @@
             android:name=".movie.data.MoviesProvider"
             android:authorities="@string/authorities" />
 
-        <service android:name=".movie.service.MovieService" />
-
         <!-- scan -->
         <activity android:name=".scan.ScanActivity"></activity>
         <!-- weather -->
         <activity
-            android:name=".weather.WeatherMainActivity"
-            android:theme="@style/ForecastTheme">
-        </activity>
-        <activity
             android:name=".weather.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".weather.WeatherMainActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hrong.simplelifetools.weather.WeatherMainActivity" />
+                android:value="MainActivity" />
         </activity>
         <activity
             android:name=".weather.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".weather.WeatherMainActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/SettingTheme" />
 
         <provider

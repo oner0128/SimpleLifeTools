@@ -27,6 +27,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,19 +41,22 @@ import android.widget.TextView;
 import com.hrong.simplelifetools.weather.data.WeatherContract;
 import com.hrong.simplelifetools.R;
 
-public class DetailActivity extends ActionBarActivity {
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.weather_detail_toolbar);
+        setSupportActionBar(toolbar);
+//        DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_detail);
         if (savedInstanceState == null) {
             Bundle args=new Bundle();
             args.putParcelable(DetailFragment.DETAIL_URI,getIntent().getData());
             DetailFragment detailFragment=new DetailFragment();
             detailFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container, detailFragment)
+                    .replace(R.id.weather_detail_container, detailFragment)
                     .commit();
         }
     }

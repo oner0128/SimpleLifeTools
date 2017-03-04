@@ -27,7 +27,7 @@ public class OpenCamera {
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             // Only use external storage directory if permission is granted, otherwise cache directory is used by default
-            saveDir = new File(Environment.getExternalStorageDirectory(), "MaterialCamera");
+            saveDir = new File(Environment.getExternalStorageDirectory(), "SimpleLifeTools/MaterialCamera");
             saveDir.mkdirs();
         }
         Log.v("StorageDirectory", Environment.getExternalStorageDirectory().toString());
